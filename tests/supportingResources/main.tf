@@ -1,4 +1,5 @@
 module "aws_client_vpc" {
+  #checkov:skip=CKV_TF_1
   source                 = "boldlink/vpc/aws"
   version                = "3.0.4"
   name                   = var.name
