@@ -99,3 +99,40 @@ variable "security_group_ingress" {
   type        = any
   default     = {}
 }
+
+variable "create_kms_key" {
+  description = "Choose whether to create kms key for logs encryption"
+  type        = bool
+  default     = false
+}
+
+variable "enable_key_rotation" {
+  description = "(Optional) Specifies whether key rotation is enabled. Defaults to false."
+  type        = bool
+  default     = false
+}
+
+variable "deletion_window_in_days" {
+  description = "(Optional) The waiting period, specified in number of days. After the waiting period ends, AWS KMS deletes the KMS key. If you specify a value, it must be between 7 and 30, inclusive. If you do not specify a value, it defaults to 30. If the KMS key is a multi-Region primary key with replicas, the waiting period begins when the last of its replica keys is deleted. Otherwise, the waiting period begins immediately."
+  type        = number
+  default     = 30
+}
+
+variable "cloudwatch_log_group_prefix" {
+  description = " Creates a unique name beginning with the specified prefix."
+  type        = string
+  default     = "/aws/vpn-client"
+
+}
+
+variable "kms_key_id" {
+  description = "Amazon Resource Name (ARN) of the KMS Key to use when encrypting"
+  type        = string
+  default     = null
+}
+
+variable "retention_in_days" {
+  description = "Specifies the number of days you want to retain log events in the specified log group. Possible values are: 1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365, 400, 545, 731, 1827, 3653, and 0. If you select 0, the events in the log group are always retained and never expire."
+  type        = number
+  default     = 1827
+}

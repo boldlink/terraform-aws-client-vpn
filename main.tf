@@ -10,7 +10,7 @@ resource "aws_ec2_client_vpn_endpoint" "main" {
   transport_protocol     = var.transport_protocol
   vpc_id                 = var.vpc_id
   vpn_port               = var.vpn_port
-  tags                   = merge({ Name = var.name }, var.tags)
+  tags                   = local.tags
 
   authentication_options {
     type                           = lookup(var.authentication_options, "type", )
@@ -31,7 +31,7 @@ resource "aws_ec2_client_vpn_endpoint" "main" {
   }
 
   connection_log_options {
-    cloudwatch_log_group  = lookup(var.connection_log_options, "cloudwatch_log_group", null)
+    cloudwatch_log_group  = local.cloudwatch_log_group
     cloudwatch_log_stream = lookup(var.connection_log_options, "cloudwatch_log_stream", null)
     enabled               = lookup(var.connection_log_options, "enabled")
   }
@@ -41,7 +41,7 @@ resource "aws_security_group" "main" {
   name        = "${var.name}-security-group"
   description = "Control traffic to the VPN client"
   vpc_id      = var.vpc_id
-  tags        = merge({ Name = var.name }, var.tags)
+  tags        = local.tags
 
   dynamic "ingress" {
     for_each = var.security_group_ingress
@@ -63,4 +63,28 @@ resource "aws_security_group" "main" {
     cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
   }
+}
+
+
+resource "aws_kms_key" "main" {
+  count                   = var.create_kms_key ? 1 : 0
+  description             = "client VPN KMS key"
+  enable_key_rotation     = var.enable_key_rotation
+  policy                  = local.policy
+  deletion_window_in_days = var.deletion_window_in_days
+  tags                    = local.tags
+}
+
+resource "aws_kms_alias" "main" {
+  count         = var.create_kms_key ? 1 : 0
+  name          = "alias/${var.name}-key"
+  target_key_id = aws_kms_key.main[0].key_id
+}
+
+resource "aws_cloudwatch_log_group" "main" {
+  count             = lookup(var.connection_log_options, "enabled") ? 1 : 0
+  name              = local.cloudwatch_log_group
+  retention_in_days = var.retention_in_days
+  kms_key_id        = var.kms_key_id == null ? join("", aws_kms_key.main.*.arn) : var.kms_key_id
+  tags              = local.tags
 }
