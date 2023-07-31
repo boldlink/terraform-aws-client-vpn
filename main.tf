@@ -4,7 +4,7 @@ resource "aws_ec2_client_vpn_endpoint" "main" {
   dns_servers            = var.dns_servers
   security_group_ids     = compact(concat([aws_security_group.main.id], var.security_group_ids))
   self_service_portal    = var.self_service_portal
-  server_certificate_arn = var.server_certificate_arn
+  server_certificate_arn = var.create_certificates ? aws_acm_certificate.server[0].arn : var.server_certificate_arn
   session_timeout_hours  = var.session_timeout_hours
   split_tunnel           = var.split_tunnel
   transport_protocol     = var.transport_protocol

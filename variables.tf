@@ -136,3 +136,47 @@ variable "retention_in_days" {
   type        = number
   default     = 1827
 }
+
+variable "recovery_window_in_days" {
+  description = "(Optional) Number of days that AWS Secrets Manager waits before it can delete the secret. This value can be 0 to force deletion without recovery or range from 7 to 30 days. The default value is 30."
+  type        = number
+  default     = 30
+}
+
+variable "create_certificates" {
+  description = "Whether to create ca,server and client certificates"
+  type        = bool
+  default     = true
+}
+
+variable "rsa_bits" {
+  description = "the size of the generated RSA key, in bits (default: 2048)."
+  type        = number
+  default     = 2048
+}
+
+variable "ca_subject" {
+  description = "(Block List, Max: 1) The subject for which ca certificate is being requested. The acceptable arguments are all optional "
+  type        = map(any)
+  default     = {}
+}
+
+variable "server_subject" {
+  description = "(Block List, Max: 1) The subject for which server certificate is being requested. The acceptable arguments are all optional "
+  type        = map(any)
+  default     = {}
+}
+
+variable "client_subject" {
+  description = "(Block List, Max: 1) The subject for which client certificate is being requested. The acceptable arguments are all optional "
+  type        = map(any)
+  default     = {}
+}
+
+
+
+variable "validity_period_hours" {
+  description = "(Number) Number of hours, after initial issuing, that the certificate will remain valid for."
+  type        = number
+  default     = 17520
+}
