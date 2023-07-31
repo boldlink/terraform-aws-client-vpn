@@ -1,4 +1,4 @@
-# ca RSA key 
+# ca RSA key
 resource "tls_private_key" "ca" {
   count     = var.create_certificates ? 1 : 0
   algorithm = "RSA"
@@ -56,7 +56,7 @@ resource "aws_secretsmanager_secret_version" "ca" {
   secret_string = tls_self_signed_cert.ca[0].cert_pem
 }
 
-# server RSA key 
+# server RSA key
 resource "tls_private_key" "server" {
   count     = var.create_certificates ? 1 : 0
   algorithm = "RSA"
@@ -126,7 +126,7 @@ resource "aws_secretsmanager_secret_version" "server" {
   secret_string = tls_locally_signed_cert.server[0].cert_pem
 }
 
-# client RSA key 
+# client RSA key
 resource "tls_private_key" "client" {
   count     = var.create_certificates ? 1 : 0
   algorithm = "RSA"
