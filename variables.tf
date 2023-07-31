@@ -11,6 +11,7 @@ variable "client_cidr_block" {
 variable "description" {
   description = "(Optional) A brief description of the Client VPN endpoint."
   type        = string
+  default     = "aws client vpn"
 }
 
 variable "dns_servers" {
@@ -34,6 +35,7 @@ variable "self_service_portal" {
 variable "server_certificate_arn" {
   description = "(Required) The ARN of the ACM server certificate."
   type        = string
+  default     = ""
 }
 
 variable "session_timeout_hours" {
@@ -92,6 +94,32 @@ variable "client_login_banner_options" {
 variable "connection_log_options" {
   description = "(Required) Information about the client connection logging options."
   type        = map(string)
+}
+
+variable "subnet_ids" {
+  type        = list(string)
+  description = "(Required) The IDs of the subnets to associate with the Client VPN endpoint."
+}
+
+variable "vpn_routes" {
+  description = "Provides additional routes for AWS Client VPN endpoints."
+  type = list(object({
+    target_vpc_subnet_id   = string
+    destination_cidr_block = string
+    description            = string
+  }))
+  default = []
+}
+
+variable "authorization_rules" {
+  description = "Provides authorization rules for AWS Client VPN endpoints."
+  type = list(object({
+    target_network_cidr  = string
+    access_group_id      = string
+    authorize_all_groups = bool
+    description          = string
+  }))
+  default = []
 }
 
 variable "security_group_ingress" {

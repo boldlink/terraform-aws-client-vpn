@@ -16,7 +16,7 @@ resource "aws_ec2_client_vpn_endpoint" "main" {
     type                           = lookup(var.authentication_options, "type", )
     saml_provider_arn              = lookup(var.authentication_options, "saml_provider_arn", null)
     active_directory_id            = lookup(var.authentication_options, "active_directory_id", null)
-    root_certificate_chain_arn     = lookup(var.authentication_options, "root_certificate_chain_arn", null)
+    root_certificate_chain_arn     = lookup(var.authentication_options, "type", ) == "certificate-authentication" && var.create_certificates ? aws_acm_certificate.client[0].arn : lookup(var.authentication_options, "root_certificate_chain_arn", null)
     self_service_saml_provider_arn = lookup(var.authentication_options, "self_service_saml_provider_arn", null)
   }
 
@@ -35,6 +35,30 @@ resource "aws_ec2_client_vpn_endpoint" "main" {
     cloudwatch_log_stream = lookup(var.connection_log_options, "cloudwatch_log_stream", null)
     enabled               = lookup(var.connection_log_options, "enabled")
   }
+}
+
+resource "aws_ec2_client_vpn_network_association" "main" {
+  count                  = length(var.subnet_ids) > 0 ? 1 : 0
+  client_vpn_endpoint_id = aws_ec2_client_vpn_endpoint.main.id
+  subnet_id              = var.subnet_ids[count.index]
+}
+
+resource "aws_ec2_client_vpn_route" "main" {
+  count                  = length(var.vpn_routes) > 0 ? 1 : 0
+  client_vpn_endpoint_id = aws_ec2_client_vpn_endpoint.main.id
+  destination_cidr_block = lookup(var.vpn_routes[count.index], "destination_cidr_block")
+  description            = lookup(var.vpn_routes[count.index], "description", "${var.description} route")
+  target_vpc_subnet_id   = lookup(var.vpn_routes[count.index], "target_vpc_subnet_id")
+  depends_on             = [aws_ec2_client_vpn_network_association.main]
+}
+
+resource "aws_ec2_client_vpn_authorization_rule" "main" {
+  count                  = length(var.authorization_rules) > 0 ? 1 : 0
+  client_vpn_endpoint_id = aws_ec2_client_vpn_endpoint.main.id
+  target_network_cidr    = lookup(var.authorization_rules[count.index], "target_network_cidr")
+  access_group_id        = lookup(var.authorization_rules[count.index], "access_group_id", null)
+  authorize_all_groups   = lookup(var.authorization_rules[count.index], "authorize_all_groups", true)
+  description            = lookup(var.authorization_rules[count.index], "description", "${var.description} authorization rule")
 }
 
 resource "aws_security_group" "main" {
