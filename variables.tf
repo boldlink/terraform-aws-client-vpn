@@ -137,7 +137,7 @@ variable "create_kms_key" {
 variable "enable_key_rotation" {
   description = "(Optional) Specifies whether key rotation is enabled. Defaults to false."
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "deletion_window_in_days" {
