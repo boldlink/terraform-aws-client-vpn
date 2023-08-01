@@ -36,11 +36,11 @@ resource "aws_ec2_client_vpn_endpoint" "main" {
     enabled               = lookup(var.connection_log_options, "enabled")
   }
 
-  depends_on = [ aws_cloudwatch_log_group.main ]
+  depends_on = [aws_cloudwatch_log_group.main]
 }
 
 resource "aws_ec2_client_vpn_network_association" "main" {
-  count                  = length(var.subnet_ids) > 0 ? length(var.subnet_ids)  : 0
+  count                  = length(var.subnet_ids) > 0 ? length(var.subnet_ids) : 0
   client_vpn_endpoint_id = aws_ec2_client_vpn_endpoint.main.id
   subnet_id              = var.subnet_ids[count.index]
 }

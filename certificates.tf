@@ -86,7 +86,7 @@ resource "tls_locally_signed_cert" "server" {
   cert_request_pem   = tls_cert_request.server[0].cert_request_pem
   ca_private_key_pem = tls_private_key.ca[0].private_key_pem
   ca_cert_pem        = tls_self_signed_cert.ca[0].cert_pem
-  is_ca_certificate = false
+  is_ca_certificate  = false
 
   validity_period_hours = var.validity_period_hours
 
@@ -156,7 +156,7 @@ resource "tls_locally_signed_cert" "client" {
   cert_request_pem   = tls_cert_request.client[0].cert_request_pem
   ca_private_key_pem = tls_private_key.ca[0].private_key_pem
   ca_cert_pem        = tls_self_signed_cert.ca[0].cert_pem
-  is_ca_certificate = false
+  is_ca_certificate  = false
 
   validity_period_hours = var.validity_period_hours
 
