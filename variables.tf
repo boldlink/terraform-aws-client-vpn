@@ -184,20 +184,20 @@ variable "rsa_bits" {
 }
 
 variable "ca_subject" {
-  description = "(Block List, Max: 1) The subject for which ca certificate is being requested. The acceptable arguments are all optional "
-  type        = map(any)
+  description = "The subject for which ca certificate is being requested. The acceptable arguments are all optional "
+  type        = any
   default     = {}
 }
 
 variable "server_subject" {
-  description = "(Block List, Max: 1) The subject for which server certificate is being requested. The acceptable arguments are all optional "
-  type        = map(any)
+  description = "The subject for which server certificate is being requested. The acceptable arguments are all optional "
+  type        = any
   default     = {}
 }
 
 variable "client_subject" {
-  description = "(Block List, Max: 1) The subject for which client certificate is being requested. The acceptable arguments are all optional "
-  type        = map(any)
+  description = "The subject for which client certificate is being requested. The acceptable arguments are all optional "
+  type        = any
   default     = {}
 }
 

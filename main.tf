@@ -35,16 +35,18 @@ resource "aws_ec2_client_vpn_endpoint" "main" {
     cloudwatch_log_stream = lookup(var.connection_log_options, "cloudwatch_log_stream", null)
     enabled               = lookup(var.connection_log_options, "enabled")
   }
+
+  depends_on = [ aws_cloudwatch_log_group.main ]
 }
 
 resource "aws_ec2_client_vpn_network_association" "main" {
-  count                  = length(var.subnet_ids) > 0 ? 1 : 0
+  count                  = length(var.subnet_ids) > 0 ? length(var.subnet_ids)  : 0
   client_vpn_endpoint_id = aws_ec2_client_vpn_endpoint.main.id
   subnet_id              = var.subnet_ids[count.index]
 }
 
 resource "aws_ec2_client_vpn_route" "main" {
-  count                  = length(var.vpn_routes) > 0 ? 1 : 0
+  count                  = length(var.vpn_routes) > 0 ? length(var.vpn_routes) : 0
   client_vpn_endpoint_id = aws_ec2_client_vpn_endpoint.main.id
   destination_cidr_block = lookup(var.vpn_routes[count.index], "destination_cidr_block")
   description            = lookup(var.vpn_routes[count.index], "description", "${var.description} route")
@@ -53,7 +55,7 @@ resource "aws_ec2_client_vpn_route" "main" {
 }
 
 resource "aws_ec2_client_vpn_authorization_rule" "main" {
-  count                  = length(var.authorization_rules) > 0 ? 1 : 0
+  count                  = length(var.authorization_rules) > 0 ? length(var.authorization_rules) : 0
   client_vpn_endpoint_id = aws_ec2_client_vpn_endpoint.main.id
   target_network_cidr    = lookup(var.authorization_rules[count.index], "target_network_cidr")
   access_group_id        = lookup(var.authorization_rules[count.index], "access_group_id", null)

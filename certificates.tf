@@ -86,6 +86,7 @@ resource "tls_locally_signed_cert" "server" {
   cert_request_pem   = tls_cert_request.server[0].cert_request_pem
   ca_private_key_pem = tls_private_key.ca[0].private_key_pem
   ca_cert_pem        = tls_self_signed_cert.ca[0].cert_pem
+  is_ca_certificate = false
 
   validity_period_hours = var.validity_period_hours
 
@@ -155,11 +156,12 @@ resource "tls_locally_signed_cert" "client" {
   cert_request_pem   = tls_cert_request.client[0].cert_request_pem
   ca_private_key_pem = tls_private_key.ca[0].private_key_pem
   ca_cert_pem        = tls_self_signed_cert.ca[0].cert_pem
+  is_ca_certificate = false
 
   validity_period_hours = var.validity_period_hours
 
   allowed_uses = [
-    "server_auth",
+    "client_auth",
     "key_encipherment",
     "digital_signature",
   ]
@@ -192,5 +194,5 @@ resource "aws_secretsmanager_secret" "client" {
 resource "aws_secretsmanager_secret_version" "client" {
   count         = var.create_certificates ? 1 : 0
   secret_id     = aws_secretsmanager_secret.client[0].id
-  secret_string = tls_locally_signed_cert.server[0].cert_pem
+  secret_string = tls_private_key.client[0].private_key_pem
 }
