@@ -58,6 +58,29 @@ variable "security_group_ingress" {
   ]
 }
 
+variable "ca_subject" {
+  description = "The subject for which ca certificate is being requested. The acceptable arguments are all optional "
+  type        = any
+  default = {
+    common_name = "ca.complete.local"
+  }
+}
+
+variable "server_subject" {
+  description = "The subject for which server certificate is being requested. The acceptable arguments are all optional "
+  type        = any
+  default = {
+    common_name = "server.complete.local"
+  }
+}
+
+variable "client_subject" {
+  description = "The subject for which client certificate is being requested. The acceptable arguments are all optional "
+  type        = any
+  default = {
+    common_name = "client.complete.local"
+  }
+}
 
 variable "tags" {
   description = "(Optional) A mapping of tags to assign to the resource. If configured with a provider default_tags configuration block present, tags with matching keys will overwrite those defined at the provider-level."

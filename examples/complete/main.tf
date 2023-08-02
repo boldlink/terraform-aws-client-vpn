@@ -5,23 +5,14 @@ module "complete_client_vpn" {
   vpc_id            = local.vpc_id
   split_tunnel      = var.split_tunnel
   authorization_rules = [{
-    target_network_cidr  = "0.0.0.0/0" #todo query supporting vpc cidr
+    target_network_cidr  = local.vpc_cidr
     authorize_all_groups = true
     access_group_id      = null
     description          = "Authorize traffic to supporting VPC"
   }]
-  ca_subject = {
-    common_name  = "ca.local"
-    organization = "boldlink"
-  }
-  server_subject = {
-    common_name  = "server.local"
-    organization = "boldlink"
-  }
-  client_subject = {
-    common_name  = "client.local"
-    organization = "boldlink"
-  }
+  ca_subject             = var.ca_subject
+  server_subject         = var.server_subject
+  client_subject         = var.client_subject
   authentication_options = var.authentication_options
   connection_log_options = var.connection_log_options
   subnet_ids             = local.subnet_ids
