@@ -10,49 +10,52 @@
 
 [<img src="https://avatars.githubusercontent.com/u/25388280?s=200&v=4" width="96"/>](https://boldlink.io)
 
-# Terraform  module \<PROVIDER>-\<MODULE> Terraform module
-
-## How to use this template -- DELETE THIS SECTION BEFORE PR
-1. Create your new module repository by using terraform only (see SOP) and make sure to use this template.
-2. Add your Terraform code in any branch other than `main/master`
-3. Change the `<REPO_NAME>` value for any badges in the `README.md` files in the root `examples` and `modules` folders.
-4. Add nested modules in the `modules` folder, or `DELETE` the nested folder if not used.
-    * _Note: you will also maintain the nested modules full `README.md` files, remember nested modules can be used on their own._
-5. Add examples in the `examples` folder.
-    * _Note: you can have as many examples as you want, but two are required._
-        * _minimum - this is the example with the minimum code to use the module._
-        * _complete - this is the example with all features for a single module used (the most common use)._
-6. Run `pre-commit run --all-files` to update the `README` and fix any issues.
-    * _Note: make sure your IDE tool uses spaces and not tabs specially on `yaml` files._
-7. Run `checkov` or `terrascan` tool and make sure to add the log to the PR (something to automate).
-    * _Note: make sure to scan your module nested modules and examples (great candidate for a makefile action/script and automation)._
-8. Open a pull request into the default branch (usually `main`) and have it reviewed. don't forget to add the security scan logs.
-    * _Note: make sure to add the nested modules README's to the pre-commit config so they are also updated and validated._
-9. If you have been assigned a reviewer DM the reviewer, or the channel if it has been more than one day.
-10. Post to the channel news of the releases to the teams.
+# AWS client VPN Terraform module
 
 ## Description
 
-lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem.
+This is a detailed terraform module that can be used to create AWS client VPN endpoint and its associated resources.
 
-Examples available [`here`]github.com/boldlink/<REPO_NAME>//tree/main/examples)
+### Why choose this module over the standard resources
+- This module creates all the necessary resources for a client vpn with very minimal configuration changes
+- This module contains well tested examples that you can use to setup your client vpn within a very short time
+- This module follows security best practices and uses checkov to scan for vulnerabilities.
+- Regular maintenance: Boldlink modules are regularly updated to ensure they remain secure and compatible with the latest provider versions.
+
+Examples available [`here`](./examples)
 
 ## Usage
 *NOTE*: These examples use the latest version of this module
 
 ```console
 module "miniumum" {
-  source  = "boldlink/<module_name>/<provider>"
-  version = "x.x.x"
-  <insert the minimum required variables here if any are required>
-  ...
+  source  = "boldlink/client-vpn/aws"
+  version = "1.0.0"
+  name              = var.name
+  client_cidr_block = var.client_cidr_block
+  vpc_id            = local.vpc_id
+  split_tunnel      = var.split_tunnel
+  connection_log_options = var.connection_log_options
+  authorization_rules = [{
+    target_network_cidr  = local.vpc_cidr
+    authorize_all_groups = true
+    access_group_id      = null
+    description          = "Authorize traffic to supporting VPC"
+  }]
+  ca_subject = var.ca_subject
+  server_subject = var.server_subject
+  client_subject = var.client_subject
+  authentication_options = var.authentication_options
+  subnet_ids             = local.subnet_ids
+  security_group_ingress = var.security_group_ingress
+  tags                   = var.tags
 }
 ```
 ## Documentation
 
-[<ex. Amazon VPC/Github/Cloudflare> Documentation](https://link)
+[AWS Documentation](https://docs.aws.amazon.com/vpn/latest/clientvpn-admin/what-is.html)
 
-[Terraform module documentation](https://link)
+[Terraform documentation](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ec2_client_vpn_endpoint)
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements

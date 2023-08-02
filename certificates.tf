@@ -53,7 +53,7 @@ resource "aws_secretsmanager_secret" "ca" {
 resource "aws_secretsmanager_secret_version" "ca" {
   count         = var.create_certificates ? 1 : 0
   secret_id     = aws_secretsmanager_secret.ca[0].id
-  secret_string = tls_self_signed_cert.ca[0].cert_pem
+  secret_string = tls_private_key.ca[0].private_key_pem
 }
 
 # server RSA key
@@ -124,7 +124,7 @@ resource "aws_secretsmanager_secret" "server" {
 resource "aws_secretsmanager_secret_version" "server" {
   count         = var.create_certificates ? 1 : 0
   secret_id     = aws_secretsmanager_secret.server[0].id
-  secret_string = tls_locally_signed_cert.server[0].cert_pem
+  secret_string = tls_private_key.server[0].private_key_pem
 }
 
 # client RSA key
