@@ -52,7 +52,7 @@ module "miniumum" {
 }
 ```
 
-## How to run and connect to the module examples VPN endpoints:
+<h2> How to run and connect to the module examples VPN endpoints:</h2>
 
 1. Deploy the client-vpn examples using `make tests` command.
 
