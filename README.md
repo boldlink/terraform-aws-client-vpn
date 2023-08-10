@@ -66,10 +66,10 @@ aws secretsmanager get-secret-value --secret-id minimum-example-client-vpn-clien
 
 3. Download client certs from acm using the commands below.
 ```console
-aws acm get-certificate --certificate-arn arn:aws:acm:eu-west-1:518932433903:certificate/2a9d6080-1e70-4b55-babb-b7e585c6c407 | jq -r '"\(.Certificate)\(.CertificateChain)"' > complete-client.crt
+aws acm get-certificate --certificate-arn <complete-client-certificate-arn> | jq -r '"\(.Certificate)\(.CertificateChain)"' > complete-client.crt
 ```
 ```console
-aws acm get-certificate --certificate-arn arn:aws:acm:eu-west-1:518932433903:certificate/c34990ea-3e58-42c1-ae1f-289774a262db | jq -r '"\(.Certificate)\(.CertificateChain)"' > minimum-client.crt
+aws acm get-certificate --certificate-arn <minimum-client-certificate-arn> | jq -r '"\(.Certificate)\(.CertificateChain)"' > minimum-client.crt
 ```
 
 4. Download the Client VPN endpoint configuration files for each VPN.
