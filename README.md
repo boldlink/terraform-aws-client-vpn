@@ -105,7 +105,7 @@ e.g
 ```
 6. Download aws VPN client application and create a profile for each vpn endpoint using their respective configuration files.
 
-See here how to connect using aws provided client VPN.
+See here how to connect using AWS provided client VPN.
 
 MacOs : https://docs.aws.amazon.com/vpn/latest/clientvpn-user/client-vpn-connect-macos.html
 
