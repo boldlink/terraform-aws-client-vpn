@@ -100,8 +100,8 @@ config file for minimum example:
 
 e.g
 ```console
---cert "/home/john/Downloads/client-vpn/minimum-client.crt"
---key "/home/john/Downloads/client-vpn/minimum-client.key"
+--cert "/home/admin/Downloads/client-vpn/minimum-client.crt"
+--key "/home/admin/Downloads/client-vpn/minimum-client.key"
 ```
 6. Download aws VPN client application and create a profile for each vpn endpoint using their respective configuration files.
 
