@@ -51,6 +51,68 @@ module "miniumum" {
   tags                   = var.tags
 }
 ```
+
+## How to run and connect to the module examples VPN endpoints:
+
+1. Deploy the client-vpn examples using `make tests` command.
+
+2. Download client keys from secrets manager using the commands below.
+```console
+aws secretsmanager get-secret-value --secret-id complete-example-client-vpn-client-certificate --query 'SecretString' --output text > complete-client.key
+```
+```console
+aws secretsmanager get-secret-value --secret-id minimum-example-client-vpn-client-certificate --query 'SecretString' --output text > minimum-client.key
+```
+
+3. Download client certs from acm using the commands below.
+```console
+aws acm get-certificate --certificate-arn arn:aws:acm:eu-west-1:518932433903:certificate/2a9d6080-1e70-4b55-babb-b7e585c6c407 | jq -r '"\(.Certificate)\(.CertificateChain)"' > complete-client.crt
+```
+```console
+aws acm get-certificate --certificate-arn arn:aws:acm:eu-west-1:518932433903:certificate/c34990ea-3e58-42c1-ae1f-289774a262db | jq -r '"\(.Certificate)\(.CertificateChain)"' > minimum-client.crt
+```
+
+4. Download the Client VPN endpoint configuration files for each VPN.
+- Open the Amazon VPC console at https://console.aws.amazon.com/vpc/.
+- In the navigation pane, choose Client VPN Endpoints.
+- Select the complete-example-client-vpn VPN endpoint and choose Download client configuration.
+- Do the same for minimum-example-client-vpn
+
+5.Open the respective Client VPN endpoint configuration files using your preferred text editor and add the following lines.
+(macos and linux)
+
+config file for complete example:
+```console
+--cert "/<path-where-complete-client.crt-was-downloaded>/complete-client.crt"
+--key "/<path-where-complete-client.key-was-downloaded>/complete-client.key"
+```
+e.g
+```console
+--cert "/home/admin/Downloads/client-vpn/complete-client.crt"
+--key "/home/admin/Downloads/client-vpn/complete-client.key"
+```
+
+config file for minimum example:
+```console
+--cert "/<path-where-minimum-client.crt-was-downloaded>/minimum-client.crt"
+--key "/<path-where-minimum-client.key-was-downloaded>/minimum-client.key"
+```
+
+e.g
+```console
+--cert "/home/john/Downloads/client-vpn/minimum-client.crt"
+--key "/home/john/Downloads/client-vpn/minimum-client.key"
+```
+6. Download aws VPN client application and create a profile for each vpn endpoint using their respective configuration files.
+
+See here how to connect using aws provide client VPN.
+
+MacOs : https://docs.aws.amazon.com/vpn/latest/clientvpn-user/client-vpn-connect-macos.html
+
+Linux : https://docs.aws.amazon.com/vpn/latest/clientvpn-user/client-vpn-connect-linux.html
+
+Windows : https://docs.aws.amazon.com/vpn/latest/clientvpn-user/client-vpn-connect-windows.html
+
 ## Documentation
 
 [AWS Documentation](https://docs.aws.amazon.com/vpn/latest/clientvpn-admin/what-is.html)
