@@ -52,7 +52,18 @@ module "miniumum" {
 }
 ```
 
-<h2> How to run and connect to the module examples VPN endpoints:</h2>
+<h2>Points to note about AWS client VPN</h2>
+
+- Client VPN CIDR and VPC CIDR MUST NOT overlap
+
+- VPN endpoint and associated VPC must be in the same AWS account & region
+
+- Associated subnets must be in the same VPC
+
+- You cannot associate multiple subnets from the same AZ
+
+
+<h2>How to deploy and connect to the module example's VPN endpoints:</h2>
 
 1. Deploy the client-vpn examples using `make tests` command.
 
