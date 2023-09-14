@@ -4,7 +4,7 @@ resource "aws_ec2_client_vpn_endpoint" "main" {
   dns_servers            = var.dns_servers
   security_group_ids     = compact(concat([aws_security_group.main.id], var.security_group_ids))
   self_service_portal    = var.self_service_portal
-  server_certificate_arn = var.create_certificates ? aws_acm_certificate.server[0].arn : var.server_certificate_arn
+  server_certificate_arn = var.create_server_certificate ? aws_acm_certificate.server[0].arn : var.server_certificate_arn
   session_timeout_hours  = var.session_timeout_hours
   split_tunnel           = var.split_tunnel
   transport_protocol     = var.transport_protocol
@@ -16,7 +16,7 @@ resource "aws_ec2_client_vpn_endpoint" "main" {
     type                           = lookup(var.authentication_options, "type", )
     saml_provider_arn              = lookup(var.authentication_options, "saml_provider_arn", null)
     active_directory_id            = lookup(var.authentication_options, "active_directory_id", null)
-    root_certificate_chain_arn     = lookup(var.authentication_options, "type", ) == "certificate-authentication" && var.create_certificates ? aws_acm_certificate.client[0].arn : lookup(var.authentication_options, "root_certificate_chain_arn", null)
+    root_certificate_chain_arn     = lookup(var.authentication_options, "type", ) == "certificate-authentication" && var.create_client_certificate ? aws_acm_certificate.client[0].arn : lookup(var.authentication_options, "root_certificate_chain_arn", null)
     self_service_saml_provider_arn = lookup(var.authentication_options, "self_service_saml_provider_arn", null)
   }
 
@@ -31,7 +31,7 @@ resource "aws_ec2_client_vpn_endpoint" "main" {
   }
 
   connection_log_options {
-    cloudwatch_log_group  = local.cloudwatch_log_group
+    cloudwatch_log_group  = lookup(var.connection_log_options, "enabled") ? local.cloudwatch_log_group : null
     cloudwatch_log_stream = lookup(var.connection_log_options, "cloudwatch_log_stream", null)
     enabled               = lookup(var.connection_log_options, "enabled")
   }
