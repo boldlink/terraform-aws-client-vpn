@@ -11,12 +11,12 @@ module "minimum_client_vpn" {
     access_group_id      = null
     description          = "Authorize traffic to supporting VPC"
   }]
-  ca_subject             = var.ca_subject
-  server_subject         = var.server_subject
+  ca_subject                = var.ca_subject
+  server_subject            = var.server_subject
   create_client_certificate = var.create_client_certificate
-  client_subject         = var.client_subject
-  authentication_options = var.authentication_options
-  subnet_ids             = local.subnet_ids
-  security_group_ingress = var.security_group_ingress
-  tags                   = var.tags
+  client_subject            = var.client_subject
+  authentication_options    = var.authentication_options
+  subnet_ids                = local.subnet_ids
+  security_group_ingress    = var.security_group_ingress
+  tags                      = var.tags
 }
