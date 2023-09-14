@@ -17,7 +17,7 @@
 
 AWS Client VPN is a managed client-based VPN service that enables you to securely access your AWS resources and resources in your on-premises network. With Client VPN, you can access your resources from any location using an OpenVPN-based VPN client.
 
-This is a detailed terraform module that can be used to create AWS client VPN endpoint and its associated resources.
+This is a detailed terraform module that can be used to create AWS client VPN endpoint(s) and its associated resources.
 
 ### Why choose this module over the standard resources
 - This module creates all the necessary resources for a client vpn with very minimal configuration changes
@@ -33,11 +33,11 @@ Examples available [`here`](./examples)
 
 ```console
 module "miniumum" {
-  source  = "boldlink/client-vpn/aws"
-  name              = var.name
-  client_cidr_block = var.client_cidr_block
-  vpc_id            = local.vpc_id
-  split_tunnel      = var.split_tunnel
+  source                 = "boldlink/client-vpn/aws"
+  name                   = var.name
+  client_cidr_block      = var.client_cidr_block
+  vpc_id                 = local.vpc_id
+  split_tunnel           = var.split_tunnel
   connection_log_options = var.connection_log_options
   authorization_rules = [{
     target_network_cidr  = local.vpc_cidr
@@ -45,13 +45,14 @@ module "miniumum" {
     access_group_id      = null
     description          = "Authorize traffic to supporting VPC"
   }]
-  ca_subject = var.ca_subject
-  server_subject = var.server_subject
-  client_subject = var.client_subject
-  authentication_options = var.authentication_options
-  subnet_ids             = local.subnet_ids
-  security_group_ingress = var.security_group_ingress
-  tags                   = var.tags
+  ca_subject                = var.ca_subject
+  server_subject            = var.server_subject
+  create_client_certificate = var.create_client_certificate
+  client_subject            = var.client_subject
+  authentication_options    = var.authentication_options
+  subnet_ids                = local.subnet_ids
+  security_group_ingress    = var.security_group_ingress
+  tags                      = var.tags
 }
 ```
 
@@ -82,7 +83,7 @@ aws secretsmanager get-secret-value --secret-id complete-example-client-vpn-clie
 aws secretsmanager get-secret-value --secret-id minimum-example-client-vpn-client-certificate --query 'SecretString' --output text > minimum-client.key
 ```
 
-3. Download client certs from acm using the commands below.
+3. Download client certificates from acm using the commands below.
 ```console
 aws acm get-certificate --certificate-arn <complete-client-certificate-arn> | jq -r '"\(.Certificate)\(.CertificateChain)"' > complete-client.crt
 ```
@@ -90,7 +91,7 @@ aws acm get-certificate --certificate-arn <complete-client-certificate-arn> | jq
 aws acm get-certificate --certificate-arn <minimum-client-certificate-arn> | jq -r '"\(.Certificate)\(.CertificateChain)"' > minimum-client.crt
 ```
 
-4. Download the Client VPN endpoint configuration files for each VPN using the commands below.
+4. Download the Client VPN endpoint configuration files for each example VPN using the commands below.
 
 ```
 aws ec2 export-client-vpn-client-configuration --client-vpn-endpoint-id <complete_example_client_vpn_endpoint_id> --output text > complete_example_config.ovpn
@@ -99,7 +100,7 @@ aws ec2 export-client-vpn-client-configuration --client-vpn-endpoint-id <complet
 aws ec2 export-client-vpn-client-configuration --client-vpn-endpoint-id <minimum_example_client_vpn_endpoint_id> --output text > minimum_example_config.ovpn
 ```
 
-5.Open the respective Client VPN endpoint configuration files using your preferred text editor and add the following lines.
+5.Open the respective Client VPN endpoint configuration files downloaded above using your preferred text editor and add the following lines.
 (macos and linux)
 
 config file for complete example:
@@ -142,9 +143,9 @@ An AWS Account
 AWS Organization that has IAM identity Center (SSO) enabled
 Terraform Installed
 
-1. Create SAML 2.0 application
+1. Create a SAML 2.0 application
 
-- In the management account AWS Console, navigate to the AWS IAM Identity Center Page. NOTE: You can't administer IAM Identity Center from a member account.
+- In the AWS Console of your management account, navigate to the AWS IAM Identity Center Page. NOTE: You cannot administer IAM Identity Center from a member account.
 - On the left-hand column of the page, navigate to “Applications”, then click the “Add a new application” button, then click “Add a custom SAML 2.0 application”.
 - Give the SAML application a name, and a useful description.
 - Click the link to download the “AWS SSO metadata file”. You will need this metadata file when you create the IAM identity provider.
