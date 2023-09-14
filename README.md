@@ -66,6 +66,10 @@ module "miniumum" {
 
 <h2>How to deploy and connect to the module example's VPN endpoints:</h2>
 
+## Connect using client certificate
+
+![alt text](https://docs.aws.amazon.com/images/vpn/latest/clientvpn-admin/images/client-vpn-scenario-igw.png "Certificate authentication")
+
 1. Deploy the client-vpn examples using `make tests` command.
 
 2. Download client keys from secrets manager using the commands below.
@@ -124,6 +128,8 @@ MacOs : https://docs.aws.amazon.com/vpn/latest/clientvpn-user/client-vpn-connect
 Linux : https://docs.aws.amazon.com/vpn/latest/clientvpn-user/client-vpn-connect-linux.html
 
 Windows : https://docs.aws.amazon.com/vpn/latest/clientvpn-user/client-vpn-connect-windows.html
+
+## Connect using federated authentication
 
 ## Documentation
 

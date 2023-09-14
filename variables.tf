@@ -171,10 +171,17 @@ variable "recovery_window_in_days" {
   default     = 30
 }
 
-variable "create_certificates" {
-  description = "Whether to create ca,server and client certificates"
+
+variable "create_server_certificate" {
+  description = "Whether to create server certificate"
   type        = bool
   default     = true
+}
+
+variable "create_client_certificate" {
+  description = "Whether to create client certificate"
+  type        = bool
+  default     = false
 }
 
 variable "rsa_bits" {
@@ -200,8 +207,6 @@ variable "client_subject" {
   type        = any
   default     = {}
 }
-
-
 
 variable "validity_period_hours" {
   description = "(Number) Number of hours, after initial issuing, that the certificate will remain valid for."
