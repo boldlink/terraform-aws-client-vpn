@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-- module example that uses external certificate for authentication(when `var.create_certificates` == false)
+- module example that uses external certificate for authentication(when `var.create_client_certificate` or `var.create_server_certificate` == false)
 - Show case Lambda function being used for connection authorization.
 - fix: CKV_TF_1 in vpc
 
