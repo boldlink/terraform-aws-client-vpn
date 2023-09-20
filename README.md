@@ -19,12 +19,35 @@ AWS Client VPN is a managed client-based VPN service that enables you to securel
 
 This is a detailed terraform module that can be used to create AWS client VPN endpoint(s) and its associated resources.
 
-### Why choose this module over the standard resources
-- This module creates all the necessary resources for a client vpn with very minimal configuration changes
-- This module contains well tested examples that you can use to setup your client vpn within a very short time
-- The module supports all modes of VPN authentication; certificate authentication, federated authentication and directory service authentication
-- This module follows security best practices and uses checkov to scan for vulnerabilities.
-- Regular maintenance: Boldlink modules are regularly updated to ensure they remain secure and compatible with the latest provider versions.
+## Why Choose This Module Over Standard Resources?
+
+1. Simplified Resource Creation
+
+This module streamlines the process of creating all the necessary resources for your AWS Client VPN with minimal configuration changes. You don't have to go through the complex setup steps manually; this module handles it for you.
+
+2. Tested Examples for Quick Setup
+
+We provide well-tested examples that you can use to set up your Client VPN quickly. These examples serve as templates, allowing you to configure your VPN within a very short time.
+
+3. Support for Multiple Authentication Methods
+
+Our module supports all modes of VPN authentication, including certificate authentication, federated authentication, and directory service authentication. You have the flexibility to choose the method that best suits your needs.
+
+4. Security Best Practices
+
+Security is a top priority. This module follows security best practices and uses Checkov to scan for vulnerabilities. You can rest assured that your VPN setup will adhere to industry standards.
+
+5. Regular Maintenance and Updates
+
+We are committed to maintaining the module's compatibility with the latest AWS provider versions. You can trust that our modules will remain secure and up to date.
+
+6. Extensive Documentation
+
+We provide detailed documentation to guide you through the setup process, making it easy to deploy and connect to your VPN endpoints. Whether you're using client certificates or federated authentication, we've got you covered.
+
+By choosing this module, you save time and effort while ensuring a secure and reliable AWS Client VPN setup. Explore our examples and get started.
+
+
 
 Examples available [`here`](./examples)
 
