@@ -1,12 +1,12 @@
 # ca RSA key
 resource "tls_private_key" "ca" {
-  count     = var.create_certificates ? 1 : 0
+  count     = var.create_server_certificate || var.create_client_certificate ? 1 : 0
   algorithm = "RSA"
   rsa_bits  = var.rsa_bits
 }
 
 resource "tls_self_signed_cert" "ca" {
-  count           = var.create_certificates ? 1 : 0
+  count           = var.create_server_certificate || var.create_client_certificate ? 1 : 0
   private_key_pem = tls_private_key.ca[0].private_key_pem
 
   subject {
@@ -30,15 +30,8 @@ resource "tls_self_signed_cert" "ca" {
   ]
 }
 
-/*resource "aws_acm_certificate" "ca" {
-  private_key      = tls_private_key.ca.private_key_pem
-  certificate_body = tls_locally_signed_cert.ca.cert_pem
-  tags             = local.tags
-}
-*/
-
 resource "aws_secretsmanager_secret" "ca" {
-  count                   = var.create_certificates ? 1 : 0
+  count                   = var.create_server_certificate || var.create_client_certificate ? 1 : 0
   name                    = "${var.name}-ca-certificate"
   recovery_window_in_days = var.recovery_window_in_days
   description             = "${var.name} ca certificate contents"
@@ -51,20 +44,20 @@ resource "aws_secretsmanager_secret" "ca" {
 }
 
 resource "aws_secretsmanager_secret_version" "ca" {
-  count         = var.create_certificates ? 1 : 0
+  count         = var.create_server_certificate || var.create_client_certificate ? 1 : 0
   secret_id     = aws_secretsmanager_secret.ca[0].id
   secret_string = tls_private_key.ca[0].private_key_pem
 }
 
 # server RSA key
 resource "tls_private_key" "server" {
-  count     = var.create_certificates ? 1 : 0
+  count     = var.create_server_certificate ? 1 : 0
   algorithm = "RSA"
   rsa_bits  = var.rsa_bits
 }
 
 resource "tls_cert_request" "server" {
-  count           = var.create_certificates ? 1 : 0
+  count           = var.create_server_certificate ? 1 : 0
   private_key_pem = tls_private_key.server[0].private_key_pem
 
   subject {
@@ -82,7 +75,7 @@ resource "tls_cert_request" "server" {
 }
 
 resource "tls_locally_signed_cert" "server" {
-  count              = var.create_certificates ? 1 : 0
+  count              = var.create_server_certificate ? 1 : 0
   cert_request_pem   = tls_cert_request.server[0].cert_request_pem
   ca_private_key_pem = tls_private_key.ca[0].private_key_pem
   ca_cert_pem        = tls_self_signed_cert.ca[0].cert_pem
@@ -98,7 +91,7 @@ resource "tls_locally_signed_cert" "server" {
 }
 
 resource "aws_acm_certificate" "server" {
-  count             = var.create_certificates ? 1 : 0
+  count             = var.create_server_certificate ? 1 : 0
   private_key       = tls_private_key.server[0].private_key_pem
   certificate_body  = tls_locally_signed_cert.server[0].cert_pem
   certificate_chain = tls_self_signed_cert.ca[0].cert_pem
@@ -109,7 +102,7 @@ resource "aws_acm_certificate" "server" {
 }
 
 resource "aws_secretsmanager_secret" "server" {
-  count                   = var.create_certificates ? 1 : 0
+  count                   = var.create_server_certificate ? 1 : 0
   name                    = "${var.name}-server-certificate"
   recovery_window_in_days = var.recovery_window_in_days
   description             = "${var.name} server certificate contents"
@@ -122,20 +115,21 @@ resource "aws_secretsmanager_secret" "server" {
 }
 
 resource "aws_secretsmanager_secret_version" "server" {
-  count         = var.create_certificates ? 1 : 0
+  count         = var.create_server_certificate ? 1 : 0
   secret_id     = aws_secretsmanager_secret.server[0].id
   secret_string = tls_private_key.server[0].private_key_pem
 }
 
 # client RSA key
 resource "tls_private_key" "client" {
-  count     = var.create_certificates ? 1 : 0
+  count = var.create_client_certificate ? 1 : 0
+
   algorithm = "RSA"
   rsa_bits  = var.rsa_bits
 }
 
 resource "tls_cert_request" "client" {
-  count           = var.create_certificates ? 1 : 0
+  count           = var.create_client_certificate ? 1 : 0
   private_key_pem = tls_private_key.client[0].private_key_pem
 
   subject {
@@ -152,7 +146,7 @@ resource "tls_cert_request" "client" {
 }
 
 resource "tls_locally_signed_cert" "client" {
-  count              = var.create_certificates ? 1 : 0
+  count              = var.create_client_certificate ? 1 : 0
   cert_request_pem   = tls_cert_request.client[0].cert_request_pem
   ca_private_key_pem = tls_private_key.ca[0].private_key_pem
   ca_cert_pem        = tls_self_signed_cert.ca[0].cert_pem
@@ -168,7 +162,7 @@ resource "tls_locally_signed_cert" "client" {
 }
 
 resource "aws_acm_certificate" "client" {
-  count             = var.create_certificates ? 1 : 0
+  count             = var.create_client_certificate ? 1 : 0
   private_key       = tls_private_key.client[0].private_key_pem
   certificate_body  = tls_locally_signed_cert.client[0].cert_pem
   certificate_chain = tls_self_signed_cert.ca[0].cert_pem
@@ -179,7 +173,7 @@ resource "aws_acm_certificate" "client" {
 }
 
 resource "aws_secretsmanager_secret" "client" {
-  count                   = var.create_certificates ? 1 : 0
+  count                   = var.create_client_certificate ? 1 : 0
   name                    = "${var.name}-client-certificate"
   recovery_window_in_days = var.recovery_window_in_days
   description             = "${var.name} client certificate contents"
@@ -192,7 +186,7 @@ resource "aws_secretsmanager_secret" "client" {
 }
 
 resource "aws_secretsmanager_secret_version" "client" {
-  count         = var.create_certificates ? 1 : 0
+  count         = var.create_client_certificate ? 1 : 0
   secret_id     = aws_secretsmanager_secret.client[0].id
   secret_string = tls_private_key.client[0].private_key_pem
 }

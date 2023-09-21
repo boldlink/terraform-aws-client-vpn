@@ -15,13 +15,39 @@
 
 ## Description
 
-This is a detailed terraform module that can be used to create AWS client VPN endpoint and its associated resources.
+AWS Client VPN is a managed client-based VPN service that enables you to securely access your AWS resources and resources in your on-premises network. With Client VPN, you can access your resources from any location using an OpenVPN-based VPN client.
 
-### Why choose this module over the standard resources
-- This module creates all the necessary resources for a client vpn with very minimal configuration changes
-- This module contains well tested examples that you can use to setup your client vpn within a very short time
-- This module follows security best practices and uses checkov to scan for vulnerabilities.
-- Regular maintenance: Boldlink modules are regularly updated to ensure they remain secure and compatible with the latest provider versions.
+This is a detailed terraform module that can be used to create AWS client VPN endpoint(s) and its associated resources.
+
+## Why Choose This Module Over Standard Resources?
+
+1. Simplified Resource Creation
+
+This module streamlines the process of creating all the necessary resources for your AWS Client VPN with minimal configuration changes. You don't have to go through the complex setup steps manually; this module handles it for you.
+
+2. Tested Examples for Quick Setup
+
+We provide well-tested examples that you can use to set up your Client VPN quickly. These examples serve as templates, allowing you to configure your VPN within a very short time.
+
+3. Support for Multiple Authentication Methods
+
+Our module supports all modes of VPN authentication, including certificate authentication, federated authentication, and directory service authentication. You have the flexibility to choose the method that best suits your needs.
+
+4. Security Best Practices
+
+Security is a top priority. This module follows security best practices and uses Checkov to scan for vulnerabilities. You can rest assured that your VPN setup will adhere to industry standards.
+
+5. Regular Maintenance and Updates
+
+We are committed to maintaining the module's compatibility with the latest AWS provider versions. You can trust that our modules will remain secure and up to date.
+
+6. Extensive Documentation
+
+We provide detailed documentation to guide you through the setup process, making it easy to deploy and connect to your VPN endpoints. Whether you're using client certificates or federated authentication, we've got you covered.
+
+By choosing this module, you save time and effort while ensuring a secure and reliable AWS Client VPN setup. Explore our examples and get started.
+
+
 
 Examples available [`here`](./examples)
 
@@ -30,12 +56,11 @@ Examples available [`here`](./examples)
 
 ```console
 module "miniumum" {
-  source  = "boldlink/client-vpn/aws"
-  version = "1.0.0"
-  name              = var.name
-  client_cidr_block = var.client_cidr_block
-  vpc_id            = local.vpc_id
-  split_tunnel      = var.split_tunnel
+  source                 = "boldlink/client-vpn/aws"
+  name                   = var.name
+  client_cidr_block      = var.client_cidr_block
+  vpc_id                 = local.vpc_id
+  split_tunnel           = var.split_tunnel
   connection_log_options = var.connection_log_options
   authorization_rules = [{
     target_network_cidr  = local.vpc_cidr
@@ -43,13 +68,14 @@ module "miniumum" {
     access_group_id      = null
     description          = "Authorize traffic to supporting VPC"
   }]
-  ca_subject = var.ca_subject
-  server_subject = var.server_subject
-  client_subject = var.client_subject
-  authentication_options = var.authentication_options
-  subnet_ids             = local.subnet_ids
-  security_group_ingress = var.security_group_ingress
-  tags                   = var.tags
+  ca_subject                = var.ca_subject
+  server_subject            = var.server_subject
+  create_client_certificate = var.create_client_certificate
+  client_subject            = var.client_subject
+  authentication_options    = var.authentication_options
+  subnet_ids                = local.subnet_ids
+  security_group_ingress    = var.security_group_ingress
+  tags                      = var.tags
 }
 ```
 
@@ -66,6 +92,10 @@ module "miniumum" {
 
 <h2>How to deploy and connect to the module example's VPN endpoints:</h2>
 
+## Connect using client certificate
+
+![alt text](./media/certificate.png "Certificate authentication")
+
 1. Deploy the client-vpn examples using `make tests` command.
 
 2. Download client keys from secrets manager using the commands below.
@@ -76,7 +106,7 @@ aws secretsmanager get-secret-value --secret-id complete-example-client-vpn-clie
 aws secretsmanager get-secret-value --secret-id minimum-example-client-vpn-client-certificate --query 'SecretString' --output text > minimum-client.key
 ```
 
-3. Download client certs from acm using the commands below.
+3. Download client certificates from acm using the commands below.
 ```console
 aws acm get-certificate --certificate-arn <complete-client-certificate-arn> | jq -r '"\(.Certificate)\(.CertificateChain)"' > complete-client.crt
 ```
@@ -84,13 +114,16 @@ aws acm get-certificate --certificate-arn <complete-client-certificate-arn> | jq
 aws acm get-certificate --certificate-arn <minimum-client-certificate-arn> | jq -r '"\(.Certificate)\(.CertificateChain)"' > minimum-client.crt
 ```
 
-4. Download the Client VPN endpoint configuration files for each VPN.
-- Open the Amazon VPC console at https://console.aws.amazon.com/vpc/.
-- In the navigation pane, choose Client VPN Endpoints.
-- Select the complete-example-client-vpn VPN endpoint and choose Download client configuration.
-- Do the same for minimum-example-client-vpn
+4. Download the Client VPN endpoint configuration files for each example VPN using the commands below.
 
-5.Open the respective Client VPN endpoint configuration files using your preferred text editor and add the following lines.
+```
+aws ec2 export-client-vpn-client-configuration --client-vpn-endpoint-id <complete_example_client_vpn_endpoint_id> --output text > complete_example_config.ovpn
+```
+```
+aws ec2 export-client-vpn-client-configuration --client-vpn-endpoint-id <minimum_example_client_vpn_endpoint_id> --output text > minimum_example_config.ovpn
+```
+
+5.Open the respective Client VPN endpoint configuration files downloaded above using your preferred text editor and add the following lines.
 (macos and linux)
 
 config file for complete example:
@@ -125,6 +158,93 @@ Linux : https://docs.aws.amazon.com/vpn/latest/clientvpn-user/client-vpn-connect
 
 Windows : https://docs.aws.amazon.com/vpn/latest/clientvpn-user/client-vpn-connect-windows.html
 
+## Connect using federated authentication
+![alt text](./media/saml.png "federated authentication")
+### Prerequisites:
+
+An AWS Account
+AWS Organization that has IAM identity Center (SSO) enabled
+Terraform Installed
+
+1. Create a SAML 2.0 application
+
+- In the AWS Console of your management account, navigate to the AWS IAM Identity Center Page. NOTE: You cannot administer IAM Identity Center from a member account.
+- On the left-hand column of the page, navigate to “Applications”, then click the “Add a new application” button, then click “Add a custom SAML 2.0 application”.
+- Give the SAML application a name, and a useful description.
+- Click the link to download the “AWS SSO metadata file”. You will need this metadata file when you create the IAM identity provider.
+- Enter `http://127.0.0.1:35001` as the Application ACS URL and `urn:amazon:webservices:clientvpn` as the Application SAML audience, and then click “Save changes”.
+- Next, you need to set up attribute mappings. In this case you only need subject mapping which needs to have a string value of ${user:email} and should have the format emailAddress.
+
+2. Create an IAM Identity provider
+
+- From the management or member account in which the VPN client will be created, navigate to the IAM page in the AWS console, and click in the left navigation column for “Identity providers”.
+- Click the option `Add provider`.
+- Select `SAML` for the Provider type, and give the provider a name.
+- Upload the metadata file you downloaded in step one above when creating the SAML Application
+- Click `Add provider`
+- Make note of the newly created provider ARN as you will need it when setting `saml_provider_arn` option under `authentication_options` in terraform.
+
+3. Deploy client vpn endpoint using terraform
+- Save the sample terraform code below in a `.tf` file.
+- Replace <identity_provider_arn_created_in_step_2_above> with the actual ARN of your SAML provider created for federated authentication.
+- Create a variables file (e.g., variables.tf) to define the input variables to be used. e.g `name` variable
+- Initialize and apply terraform from the root folder containing the saved terraform file(s) using the commands below.
+
+```
+terraform init
+terraform apply
+```
+- Terraform apply will prompt you to confirm the creation of resources. Review the plan and type `yes` to proceed.
+- Take note of the client vpn id displayed as output. In the example below, the output has been declared as `cvpn_id`. The id will be used in step 4 below.
+
+### Terraform example using federated-authentication
+```
+module "federated_authentication" {
+  source            = "boldlink/client-vpn/aws"
+  name              = var.name
+  client_cidr_block = var.client_cidr_block
+  vpc_id            = var.vpc_id
+  split_tunnel      = var.split_tunnel
+  authorization_rules = [{
+    target_network_cidr  = var.vpc_cidr
+    authorize_all_groups = true
+    access_group_id      = null
+    description          = "Authorize traffic to supporting VPC"
+  }]
+  ca_subject     = var.ca_subject
+  server_subject = var.server_subject
+  authentication_options = {
+    type              = "federated-authentication"
+    saml_provider_arn = "<identity_provider_arn_created_in_step_2_above>" # e.g. "arn:aws:iam::11111222223:saml-provider/AWS_SSO_FOR_CLIENT_VPN"
+  }
+  connection_log_options = var.connection_log_options
+  subnet_ids             = var.subnet_ids
+  create_kms_key         = var.create_kms_key
+  security_group_ingress = var.security_group_ingress
+  tags                   = var.tags
+}
+
+output "cvpn_id" {
+  value = module.federated_authentication.id
+}
+```
+
+4. Download the Client VPN endpoint configuration file using the command below.
+
+```
+aws ec2 export-client-vpn-client-configuration --client-vpn-endpoint-id <client_vpn_endpoint_id> --output text > config.ovpn
+```
+
+5. Download aws VPN client application and create a profile for each vpn endpoint using their respective configuration files.
+
+See here how to connect using AWS provided client VPN.
+
+MacOs : https://docs.aws.amazon.com/vpn/latest/clientvpn-user/client-vpn-connect-macos.html
+
+Linux : https://docs.aws.amazon.com/vpn/latest/clientvpn-user/client-vpn-connect-linux.html
+
+Windows : https://docs.aws.amazon.com/vpn/latest/clientvpn-user/client-vpn-connect-windows.html
+
 ## Documentation
 
 [AWS Documentation](https://docs.aws.amazon.com/vpn/latest/clientvpn-admin/what-is.html)
@@ -144,7 +264,7 @@ Windows : https://docs.aws.amazon.com/vpn/latest/clientvpn-user/client-vpn-conne
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 5.13.1 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 5.17.0 |
 | <a name="provider_tls"></a> [tls](#provider\_tls) | 4.0.4 |
 
 ## Modules
@@ -196,8 +316,9 @@ No modules.
 | <a name="input_client_subject"></a> [client\_subject](#input\_client\_subject) | The subject for which client certificate is being requested. The acceptable arguments are all optional | `any` | `{}` | no |
 | <a name="input_cloudwatch_log_group_prefix"></a> [cloudwatch\_log\_group\_prefix](#input\_cloudwatch\_log\_group\_prefix) | Creates a unique name beginning with the specified prefix. | `string` | `"/aws/vpn-client"` | no |
 | <a name="input_connection_log_options"></a> [connection\_log\_options](#input\_connection\_log\_options) | (Required) Information about the client connection logging options. | `map(string)` | n/a | yes |
-| <a name="input_create_certificates"></a> [create\_certificates](#input\_create\_certificates) | Whether to create ca,server and client certificates | `bool` | `true` | no |
+| <a name="input_create_client_certificate"></a> [create\_client\_certificate](#input\_create\_client\_certificate) | Whether to create client certificate | `bool` | `false` | no |
 | <a name="input_create_kms_key"></a> [create\_kms\_key](#input\_create\_kms\_key) | Choose whether to create kms key for logs encryption | `bool` | `false` | no |
+| <a name="input_create_server_certificate"></a> [create\_server\_certificate](#input\_create\_server\_certificate) | Whether to create server certificate | `bool` | `true` | no |
 | <a name="input_deletion_window_in_days"></a> [deletion\_window\_in\_days](#input\_deletion\_window\_in\_days) | (Optional) The waiting period, specified in number of days. After the waiting period ends, AWS KMS deletes the KMS key. If you specify a value, it must be between 7 and 30, inclusive. If you do not specify a value, it defaults to 30. If the KMS key is a multi-Region primary key with replicas, the waiting period begins when the last of its replica keys is deleted. Otherwise, the waiting period begins immediately. | `number` | `30` | no |
 | <a name="input_description"></a> [description](#input\_description) | (Optional) A brief description of the Client VPN endpoint. | `string` | `"aws client vpn"` | no |
 | <a name="input_dns_servers"></a> [dns\_servers](#input\_dns\_servers) | (Optional) Information about the DNS servers to be used for DNS resolution. A Client VPN endpoint can have up to two DNS servers. If no DNS server is specified, the DNS address of the connecting device is used. | `list(string)` | `[]` | no |

@@ -10,13 +10,14 @@ module "complete_client_vpn" {
     access_group_id      = null
     description          = "Authorize traffic to supporting VPC"
   }]
-  ca_subject             = var.ca_subject
-  server_subject         = var.server_subject
-  client_subject         = var.client_subject
-  authentication_options = var.authentication_options
-  connection_log_options = var.connection_log_options
-  subnet_ids             = local.subnet_ids
-  create_kms_key         = var.create_kms_key
-  security_group_ingress = var.security_group_ingress
-  tags                   = var.tags
+  ca_subject                = var.ca_subject
+  server_subject            = var.server_subject
+  create_client_certificate = var.create_client_certificate
+  client_subject            = var.client_subject
+  authentication_options    = var.authentication_options
+  connection_log_options    = var.connection_log_options
+  subnet_ids                = local.subnet_ids
+  create_kms_key            = var.create_kms_key
+  security_group_ingress    = var.security_group_ingress
+  tags                      = var.tags
 }
