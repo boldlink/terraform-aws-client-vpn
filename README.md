@@ -94,7 +94,7 @@ module "miniumum" {
 
 ## Connect using client certificate
 
-![alt text](./media/client-vpn-certificate.png "Certificate authentication")
+![alt text](./media/certificate.png "Certificate authentication")
 
 1. Deploy the client-vpn examples using `make tests` command.
 
