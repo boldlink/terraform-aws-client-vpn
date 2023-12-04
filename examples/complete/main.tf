@@ -3,7 +3,7 @@ module "lambda" {
   version          = "1.1.1"
   function_name    = "AWSClientVPN-${var.name}" #The name of the Lambda function must begin with the AWSClientVPN- prefix.
   description      = "Example client VPN authorization lambda function"
-  filename         = "lambda.zip"
+  filename         = local.filename
   handler          = "example.lambda_handler"
   runtime          = "python3.9"
   source_code_hash = data.archive_file.lambda_zip.output_base64sha256
