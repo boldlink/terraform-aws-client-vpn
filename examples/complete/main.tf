@@ -7,14 +7,6 @@ module "lambda" {
   handler          = "example.lambda_handler"
   runtime          = "python3.9"
   source_code_hash = data.archive_file.lambda_zip.output_base64sha256
-  #lambda_permissions = [
-  #  {
-  #    statement_id = "AllowExecutionFromClientVPN"
-  #    action       = "lambda:InvokeFunction"
-  #    principal    = "logs.amazonaws.com"
-  #    source_arn   = module.complete_client_vpn.log_group_arn
-  #  }
-  #]
   tags = var.tags
 
 }
