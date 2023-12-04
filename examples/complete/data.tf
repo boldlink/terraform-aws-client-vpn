@@ -16,3 +16,9 @@ data "aws_subnet" "private" {
   for_each = toset(data.aws_subnets.private.ids)
   id       = each.value
 }
+
+data "archive_file" "lambda_zip" {
+  type        = "zip"
+  source_dir  = "./lambda"
+  output_path = "lambda.zip"
+}

@@ -6,8 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 - module example that uses external certificate for authentication(when `var.create_client_certificate` or `var.create_server_certificate` == false)
-- Show case Lambda function being used for connection authorization.
 - fix: CKV_TF_1 in vpc
+
+## [1.0.2] - 2023-12-04
+- added connection authorization lambda to complete example
+- added session timeout, VPN port, dns servers, self signed portal, client login banner options to complete example.
+- added CKV_TF_1 exception to .checkov.yml file
 
 ## [1.0.1] - 2023-09-14
 - fix: separated client and server certificate creation options.
@@ -24,7 +28,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: secrets created in secrets manager that contain certificate authority, server and client key contents
 - feat: VPC as a supporting stack for the module
 
-[Unreleased]: https://github.com/boldlink/terraform-aws-client-vpn/compare/1.0.1...HEAD
+[Unreleased]: https://github.com/boldlink/terraform-aws-client-vpn/compare/1.0.2...HEAD
 
+[1.0.2]: https://github.com/boldlink/terraform-aws-client-vpn/releases/tag/1.0.2
 [1.0.1]: https://github.com/boldlink/terraform-aws-client-vpn/releases/tag/1.0.1
 [1.0.0]: https://github.com/boldlink/terraform-aws-client-vpn/releases/tag/1.0.0

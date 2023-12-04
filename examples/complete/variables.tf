@@ -101,3 +101,30 @@ variable "tags" {
     LayerId            = "Example"
   }
 }
+
+variable "session_timeout_hours" {
+  description = " (Optional) The maximum session duration is a trigger by which end-users are required to re-authenticate prior to establishing a VPN session. Default value is 24 - Valid values: 8 | 10 | 12 | 24"
+  type        = number
+  default     = 12
+}
+
+variable "vpn_port" {
+  description = "(Optional) The port number for the Client VPN endpoint. Valid values are 443 and 1194. Default value is 443."
+  type        = number
+  default     = 443
+}
+
+variable "dns_servers" {
+  description = "(Optional) Information about the DNS servers to be used for DNS resolution. A Client VPN endpoint can have up to two DNS servers. If no DNS server is specified, the DNS address of the connecting device is used."
+  type        = list(string)
+  default     = ["8.8.8.8", "8.8.4.4"]
+}
+
+variable "client_login_banner_options" {
+  description = "(Optional) Options for enabling a customizable text banner that will be displayed on AWS provided clients when a VPN session is established."
+  type        = map(string)
+  default = {
+    banner_text = "Example client VPN login banner text. Your connection was successful!"
+    enabled     = true
+  }
+}
