@@ -32,3 +32,8 @@ output "owner_id" {
   description = "Owner ID"
   value       = aws_security_group.main.owner_id
 }
+
+output "log_group_arn" {
+  description = "The Amazon Resource Name (ARN) specifying the log group"
+  value       = aws_cloudwatch_log_group.main[0].arn
+}

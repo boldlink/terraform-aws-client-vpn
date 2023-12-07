@@ -57,6 +57,7 @@ Examples available [`here`](./examples)
 ```console
 module "miniumum" {
   source                 = "boldlink/client-vpn/aws"
+  version                = "<insert_latest_module_version_here>"
   name                   = var.name
   client_cidr_block      = var.client_cidr_block
   vpc_id                 = local.vpc_id
@@ -218,6 +219,7 @@ module "federated_authentication" {
     saml_provider_arn = "<identity_provider_arn_created_in_step_2_above>" # e.g. "arn:aws:iam::11111222223:saml-provider/AWS_SSO_FOR_CLIENT_VPN"
   }
   connection_log_options = var.connection_log_options
+  self_service_portal    = var.self_service_portal
   subnet_ids             = var.subnet_ids
   create_kms_key         = var.create_kms_key
   security_group_ingress = var.security_group_ingress
@@ -264,8 +266,8 @@ Windows : https://docs.aws.amazon.com/vpn/latest/clientvpn-user/client-vpn-conne
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 5.17.0 |
-| <a name="provider_tls"></a> [tls](#provider\_tls) | 4.0.4 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 5.29.0 |
+| <a name="provider_tls"></a> [tls](#provider\_tls) | 4.0.5 |
 
 ## Modules
 
@@ -350,6 +352,7 @@ No modules.
 | <a name="output_arn"></a> [arn](#output\_arn) | The ARN of the Client VPN endpoint. |
 | <a name="output_dns_name"></a> [dns\_name](#output\_dns\_name) | The DNS name to be used by clients when establishing their VPN session. |
 | <a name="output_id"></a> [id](#output\_id) | The ID of the Client VPN endpoint. |
+| <a name="output_log_group_arn"></a> [log\_group\_arn](#output\_log\_group\_arn) | The Amazon Resource Name (ARN) specifying the log group |
 | <a name="output_owner_id"></a> [owner\_id](#output\_owner\_id) | Owner ID |
 | <a name="output_sg_arn"></a> [sg\_arn](#output\_sg\_arn) | ARN of the security group. |
 | <a name="output_sg_id"></a> [sg\_id](#output\_sg\_id) | ID of the security group. |

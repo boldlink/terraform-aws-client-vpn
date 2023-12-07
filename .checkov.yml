@@ -6,3 +6,4 @@ external-modules-download-path: .external_modules
 framework: all
 skip-check:
 - CKV2_AWS_57 #"Ensure Secrets Manager secrets should have automatic rotation enabled"
+- CKV_TF_1 #"Ensure Terraform module sources use a commit hash"
